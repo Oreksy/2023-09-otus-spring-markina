@@ -1,9 +1,9 @@
 package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
-import ru.otus.hw.dao.QuestionAnswerDao;
+import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.exceptions.QuestionReadException;
-import ru.otus.hw.model.QuestionAnswers;
+import ru.otus.hw.model.Question;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class TestServiceImpl implements TestService {
 
     private final IOService ioService;
 
-    private final QuestionAnswerDao questionAnswerDao;
+    private final QuestionDao questionDao;
 
     @Override
     public void executeTest() {
@@ -20,15 +20,20 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("Please answer the questions below%n");
         // Получить вопросы из дао и вывести их с вариантами ответов
         try {
-            List<QuestionAnswers> questionAnswersList = questionAnswerDao.findAll();
-            for (QuestionAnswers questionAnswers : questionAnswersList) {
-                ioService.printFormattedLine(questionAnswers.getQuestion());
-                questionAnswers.getAnswers().forEach(answer -> ioService.printFormattedLine(answer));
-            }
+            List<Question> questionList = questionDao.findAll();
+            printQuestions(questionList);
         } catch (QuestionReadException qex) {
-            ioService.printLine(qex.getMessage());
+            ioService.printLine("Error reading csv file.");
         } catch (Exception ex) {
-            ioService.printLine("Произошла неизвестная ошибка");
+            ioService.printLine("Received an unknown error.");
+        }
+    }
+
+    private void printQuestions(List<Question> questionList) {
+        for (Question question : questionList) {
+            ioService.printLine(question.text());
+            question.answers().forEach(answer -> ioService.printLine(answer.text()));
+            ioService.printLine("");
         }
     }
 }
