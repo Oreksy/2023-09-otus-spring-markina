@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.dao.dto.QuestionDto;
+import ru.otus.hw.exceptions.FileNotFindException;
 import ru.otus.hw.exceptions.QuestionReadException;
 import ru.otus.hw.model.Question;
 
@@ -19,9 +20,10 @@ public class CsvQuestionDao implements QuestionDao {
     @Override
     public List<Question> findAll() {
 
-        try {
-            InputStream inputStream = this.getClass().getResourceAsStream(fileNameProvider.getTestFileName());
-            assert inputStream != null;
+        try (InputStream inputStream = this.getClass().getResourceAsStream(fileNameProvider.getTestFileName())) {
+            if (inputStream == null) {
+                throw new FileNotFindException("File did not find.");
+            }
             InputStreamReader reader = new InputStreamReader(inputStream);
 
             CsvToBean<QuestionDto> question = new CsvToBeanBuilder<QuestionDto>(reader)
@@ -32,6 +34,8 @@ public class CsvQuestionDao implements QuestionDao {
                     .map(QuestionDto::toModelObject)
                     .toList();
 
+        } catch (FileNotFindException exfn) {
+            throw exfn;
         } catch (Exception ex) {
            throw new QuestionReadException("Error reading csv file.", ex);
         }
