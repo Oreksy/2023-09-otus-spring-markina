@@ -35,7 +35,7 @@ public class CsvQuestionDao implements QuestionDao {
                     .toList();
 
         } catch (FileNotFindException exfn) {
-            throw exfn;
+            throw new QuestionReadException(exfn.getMessage(),exfn);
         } catch (Exception ex) {
            throw new QuestionReadException("Error reading csv file.", ex);
         }

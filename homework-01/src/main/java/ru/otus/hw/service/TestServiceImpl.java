@@ -2,7 +2,6 @@ package ru.otus.hw.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.otus.hw.dao.QuestionDao;
-import ru.otus.hw.exceptions.FileNotFindException;
 import ru.otus.hw.exceptions.QuestionReadException;
 import ru.otus.hw.model.Question;
 
@@ -23,10 +22,8 @@ public class TestServiceImpl implements TestService {
         try {
             List<Question> questionList = questionDao.findAll();
             printQuestions(questionList);
-        } catch (FileNotFindException exfn) {
-            ioService.printLine("File did not find.");
         } catch (QuestionReadException qex) {
-            ioService.printLine("Error reading csv file.");
+            ioService.printLine("Error reading questions.");
         } catch (Exception ex) {
             ioService.printLine("Received an unknown error.");
         }
