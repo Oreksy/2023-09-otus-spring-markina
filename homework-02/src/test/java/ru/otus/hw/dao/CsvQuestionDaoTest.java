@@ -29,7 +29,7 @@ public class CsvQuestionDaoTest {
 
     @DisplayName("Проверка чтения файла с вопросами - возвращаются вопросы")
     @Test
-    void QuestionSuccess() {
+    void questionSuccess() {
         when(testFileNameProvider.getTestFileName()).thenReturn(FILE_NAME_SUCCESS);
         List<Question> questionList = csvQuestionDao.findAll();
         assertEquals(2, questionList.size());
@@ -37,7 +37,7 @@ public class CsvQuestionDaoTest {
 
     @DisplayName("Проверка чтения файла с вопросами - возвращается исключение QuestionReadException")
     @Test
-    void QuestionError() {
+    void questionError() {
         when(testFileNameProvider.getTestFileName()).thenReturn(FILE_NAME_ERROR);
         assertThrows(QuestionReadException.class, csvQuestionDao::findAll,"Получено исключение QuestionReadException");
     }
