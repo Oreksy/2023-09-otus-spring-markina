@@ -3,6 +3,7 @@ package ru.otus.hw.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.hw.config.TestConfig;
@@ -21,15 +22,17 @@ import static org.mockito.Mockito.when;
 public class ResultServiceImplTest {
 
     private TestResult testResult;
-    private ResultServiceImpl resultService;
     private static final int COUNT_ANSWER_SUCCESS = 2;
     private static final int COUNT_ANSWER_NOT_SUCCESS = 3;
 
     @MockBean
-    TestConfig testConfig;
+    private TestConfig testConfig;
 
     @MockBean
-    LocalizedIOService ioService;
+    private LocalizedIOService ioService;
+
+    @Autowired
+    private ResultServiceImpl resultService;
 
     @BeforeEach
     public void initEach(){
@@ -43,7 +46,6 @@ public class ResultServiceImplTest {
         testResult.applyAnswer(question1,true);
         testResult.applyAnswer(question2,true);
         testResult.applyAnswer(question3,false);
-        resultService = new ResultServiceImpl(testConfig, ioService);
     }
 
     @DisplayName("Тестирование успешно")

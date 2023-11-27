@@ -7,7 +7,7 @@ import ru.otus.hw.service.TestRunnerService;
 
 @ShellComponent
 @RequiredArgsConstructor
-public class StartTest {
+public class TestCommand {
 
     private final TestRunnerService testRunnerService;
 

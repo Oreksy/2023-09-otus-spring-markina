@@ -3,6 +3,7 @@ package ru.otus.hw.dao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.hw.config.TestFileNameProvider;
@@ -21,16 +22,12 @@ public class CsvQuestionDaoTest {
     private static final String FILE_NAME_SUCCESS = "/questions_test.csv";
     private static final String FILE_NAME_SUCCESS_RU = "/questions_test_ru.csv";
     private static final String FILE_NAME_ERROR = "/questions_error.csv";
-    private CsvQuestionDao csvQuestionDao;
 
     @MockBean
-    TestFileNameProvider testFileNameProvider;
+    private TestFileNameProvider testFileNameProvider;
 
-
-    @BeforeEach
-    public void initEach(){
-        csvQuestionDao = new CsvQuestionDao(testFileNameProvider);
-    }
+    @Autowired
+    private CsvQuestionDao csvQuestionDao;
 
     @DisplayName("Проверка чтения файла с вопросами - возвращаются вопросы")
     @Test
