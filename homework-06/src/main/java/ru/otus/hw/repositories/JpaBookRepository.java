@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
@@ -45,8 +44,11 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public List<Book> findAllByAuthorId(long authorId) {
-        List<Book> allBooks = findAll();
-        return allBooks.stream().filter(b -> b.getAuthor().getId() == authorId).collect(Collectors.toList());
+        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-genre-entity-graph");
+        TypedQuery<Book> query =  em.createQuery("select b from Book b where b.author.id = :authorId", Book.class);
+        query.setParameter("authorId", authorId);
+        query.setHint(FETCH.getKey(), entityGraph);
+        return query.getResultList();
     }
 
     @Override
