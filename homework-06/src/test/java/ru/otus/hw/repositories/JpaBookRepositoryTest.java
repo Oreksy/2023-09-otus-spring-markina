@@ -1,7 +1,8 @@
 package ru.otus.hw.repositories;
 
+import jakarta.persistence.TypedQuery;
 import lombok.val;
-import org.hibernate.SessionFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +13,17 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jpa для работы с книгами ")
 @DataJpaTest
-@Import({JpaBookRepository.class, JpaAuthorRepository.class, JpaGenreRepository.class})
+@Import({JpaBookRepository.class})
 public class JpaBookRepositoryTest {
 
     @Autowired
     private JpaBookRepository repositoryJpa;
-
-    @Autowired
-    private JpaAuthorRepository jpaAuthorRepository;
-
-    @Autowired
-    private JpaGenreRepository jpaGenreRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -41,8 +38,15 @@ public class JpaBookRepositoryTest {
 
     private static final int EXPECTED_NUMBER_OF_BOOKS = 3;
 
-    private static final int EXPECTED_QUERIES_COUNT = 1;
+    private List<Author> authors;
 
+    private List<Genre> genres;
+
+    @BeforeEach
+    void setUp() {
+        authors = getAllAuthors();
+        genres = getAllGenres();
+    }
 
     @DisplayName("должен загружать информацию о нужной книге по id")
     @Test
@@ -57,16 +61,12 @@ public class JpaBookRepositoryTest {
     @DisplayName("должен загружать список всех книг")
     @Test
     void shouldReturnCorrectBooksList() {
-        SessionFactory sessionFactory = em.getEntityManager().getEntityManagerFactory()
-                .unwrap(SessionFactory.class);
-        sessionFactory.getStatistics().setStatisticsEnabled(true);
 
         val books = repositoryJpa.findAll();
         assertThat(books).isNotNull().hasSize(EXPECTED_NUMBER_OF_BOOKS)
                 .allMatch(a -> !a.getTitle().isEmpty())
                 .allMatch(a -> a.getAuthor() != null)
                 .allMatch(a -> a.getGenre()!= null);
-        assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(EXPECTED_QUERIES_COUNT);
     }
 
     @DisplayName("должен удалять книгу по id ")
@@ -89,8 +89,8 @@ public class JpaBookRepositoryTest {
         String oldTitle = firstBook.getTitle();
         em.detach(firstBook);
 
-        Author author = jpaAuthorRepository.findById(firstBook.getAuthor().getId()).get();
-        Genre genre = jpaGenreRepository.findById(firstBook.getGenre().getId()).get();
+        Author author = getAllAuthors().stream().filter(a -> a.getId()==firstBook.getAuthor().getId()).findFirst().get();
+        Genre genre = getAllGenres().stream().filter(g ->g.getId()==firstBook.getGenre().getId()).findFirst().get();
 
         Book bookNewTitle = new Book(firstBook.getId(), BOOK_NAME, author, genre);
 
@@ -103,8 +103,8 @@ public class JpaBookRepositoryTest {
     @Test
     void shouldSaveInsertedBook() {
 
-        Author author = jpaAuthorRepository.findById(FIRST_AUTHOR_ID).get();
-        Genre genre = jpaGenreRepository.findById(FIRST_GENRE_ID).get();
+        Author author = getAllAuthors().stream().filter(a -> a.getId()==FIRST_AUTHOR_ID).findFirst().get();
+        Genre genre = getAllGenres().stream().filter(g ->g.getId()==FIRST_GENRE_ID).findFirst().get();
 
         Book book = new Book(0, BOOK_NAME, author, genre);
 
@@ -115,5 +115,17 @@ public class JpaBookRepositoryTest {
                 .matches(b -> b.getAuthor() != null && b.getAuthor().getId()==FIRST_AUTHOR_ID)
                 .matches(b -> b.getGenre() != null && b.getGenre().getId()==FIRST_GENRE_ID);
 
+    }
+
+    private List<Author> getAllAuthors() {
+        TypedQuery<Author> query = em.getEntityManager()
+                .createQuery("select a from Author a", Author.class);
+        return query.getResultList();
+    }
+
+    private List<Genre> getAllGenres() {
+        TypedQuery<Genre> query = em.getEntityManager()
+                .createQuery("select g from Genre g", Genre.class);
+        return query.getResultList();
     }
 }

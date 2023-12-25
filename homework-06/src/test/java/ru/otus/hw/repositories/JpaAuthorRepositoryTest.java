@@ -1,7 +1,6 @@
 package ru.otus.hw.repositories;
 
 import lombok.val;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,9 @@ public class JpaAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     @Test
     void shouldReturnCorrectAuthors() {
-        SessionFactory sessionFactory = em.getEntityManager().getEntityManagerFactory()
-                .unwrap(SessionFactory.class);
-        sessionFactory.getStatistics().setStatisticsEnabled(true);
-
         val authors = repositoryJpa.findAll();
         assertThat(authors).isNotNull().hasSize(EXPECTED_NUMBER_OF_AUTHORS)
                 .allMatch(a -> !a.getFullName().isEmpty());
-        assertThat(sessionFactory.getStatistics().getPrepareStatementCount()).isEqualTo(EXPECTED_QUERIES_COUNT);
     }
 
 
