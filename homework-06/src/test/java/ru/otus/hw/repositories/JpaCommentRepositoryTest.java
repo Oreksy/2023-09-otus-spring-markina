@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jpa для работы с комментариями ")
 @DataJpaTest
-@Import({JpaCommentRepository.class, JpaBookRepository.class})
+@Import({JpaCommentRepository.class})
 public class JpaCommentRepositoryTest {
 
     @Autowired
