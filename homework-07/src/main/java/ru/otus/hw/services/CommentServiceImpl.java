@@ -35,6 +35,14 @@ public class CommentServiceImpl  implements CommentService {
         return commentRepository.findByBookId(bookId);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<Comment> findByBook(long bookId) {
+        Book book = bookRepository.findById(bookId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Book with id = %s not found", bookId)));
+        return commentRepository.findByBook(book);
+    }
+
     @Transactional
     @Override
     public void deleteById(long id) {

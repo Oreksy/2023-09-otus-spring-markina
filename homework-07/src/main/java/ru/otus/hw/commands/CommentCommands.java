@@ -32,6 +32,14 @@ public class CommentCommands {
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
+    //cbb 2
+    @ShellMethod(value = "Find comment by book id", key = "cbb")
+    public String findCommentByBook(long bookId) {
+        return commentService.findByBookId(bookId).stream()
+                .map(commentConverter::commentToString)
+                .collect(Collectors.joining("," + System.lineSeparator()));
+    }
+
     @ShellMethod(value = "Delete Comment by id", key = "cdel")
     public void deleteComment(long id) {
         commentService.deleteById(id);
