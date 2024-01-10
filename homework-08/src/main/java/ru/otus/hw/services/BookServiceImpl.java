@@ -51,12 +51,9 @@ public class BookServiceImpl implements BookService {
     private Book save(String id, String title, String authorId, String[] genres) {
         var author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(authorId)));
-        //if (id==null) {
-            var book = new Book(id,title, author, List.of(genres));
-            return bookRepository.save(book);
-        //}
-       // var book = new Book(id,title, author, List.of("test"));
-       // return bookRepository.save(book);
+
+        var book = new Book(id,title, author, List.of(genres));
+        return bookRepository.save(book);
 
     }
 }

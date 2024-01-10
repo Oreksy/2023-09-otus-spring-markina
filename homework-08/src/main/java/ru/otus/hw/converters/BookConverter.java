@@ -16,6 +16,5 @@ public class BookConverter {
                 book.getTitle(),
                 authorConverter.authorToString(book.getAuthor()),
                 book.getGenre());
-                //genreConverter.genreToString(book.getGenre()));
     }
 }
