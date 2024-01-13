@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookRepositoryTest {
     private static final String FIRST_BOOK_ID = "1";
 
+    private static final String BOOK_ID = "100";
+
     private static final int EXPECTED_NUMBER_OF_BOOKS = 3;
 
     @Autowired
@@ -49,17 +51,23 @@ public class BookRepositoryTest {
                 .allMatch(a -> a.getGenre()!= null);
     }
 
-    @DisplayName("должен загружать книги по id автора")
+    @DisplayName("должен проверить книги по id автора есть")
     @Test
-    void shouldReturnCorrectBooksByAuthorId() {
+    void shouldReturnCheckBooksByAuthorIdExist() {
 
-        Book expectedBook = mongoTemplate.findById(FIRST_BOOK_ID,Book.class);
+        Boolean bookExists = bookRepository.existsByAuthorId(FIRST_BOOK_ID);
 
-        val books = bookRepository.findAllByAuthorId(expectedBook.getAuthor().getId());
+        assertThat(bookExists).isTrue();
 
-        assertThat(books.get(0)).isNotNull().matches(a -> a.getTitle().equals(expectedBook.getTitle()))
-                .matches(a-> a.getId().equals(expectedBook.getId()))
-                .matches(a-> a.getAuthor().getFullName().equals(expectedBook.getAuthor().getFullName()));
+    }
+
+    @DisplayName("должен проверить книг по id автора нет")
+    @Test
+    void shouldReturnCheckBooksByAuthorIdNotExist() {
+
+        Boolean bookExists = bookRepository.existsByAuthorId(BOOK_ID);
+
+        assertThat(bookExists).isFalse();
 
     }
 

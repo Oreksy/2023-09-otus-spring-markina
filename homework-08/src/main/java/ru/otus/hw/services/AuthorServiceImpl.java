@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 
@@ -40,8 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional
     @Override
     public void deleteById(String id) {
-        List<Book> booksByAuthorId =  bookRepository.findAllByAuthorId(id);
-        if (booksByAuthorId.isEmpty()) {
+        if (!bookRepository.existsByAuthorId(id)) {
             authorRepository.deleteById(id);
         } else {
             throw new EntityNotFoundException("Could not delete the author with id = %s".formatted(id));

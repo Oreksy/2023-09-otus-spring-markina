@@ -14,5 +14,6 @@ public interface BookRepository extends MongoRepository<Book, String> {
     @NonNull
     List<Book> findAll();
 
-    List<Book> findAllByAuthorId(String authorId);
+    Boolean existsByAuthorId(String authorId);
+
 }

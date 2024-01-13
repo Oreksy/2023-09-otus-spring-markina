@@ -19,6 +19,8 @@ public class CommentRepositoryTest {
 
     private static final String FIRST_BOOK_ID = "1";
 
+    private static final String COMMENT_ID = "3";
+
     @Autowired
     private CommentRepository commentRepository;
 
@@ -54,4 +56,19 @@ public class CommentRepositoryTest {
                 .matches(a-> a.getBook().getTitle().equals(expectedComment.getBook().getTitle()));
 
     }
+
+    @DisplayName("должен удалять комментарии по id книги")
+    @Test
+    void shouldDeleteCommentsByBookId() {
+
+        Comment comment = mongoTemplate.findById(COMMENT_ID, Comment.class);
+
+        commentRepository.deleteByBookId(comment.getBook().getId());
+
+        Comment commentDel = mongoTemplate.findById(COMMENT_ID, Comment.class);
+
+        assertThat(commentDel).isNull();
+
+    }
+
 }
