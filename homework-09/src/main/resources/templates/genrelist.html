@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all genres</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genres {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        .genres tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .genres td:first-child {
+            width: 10px;
+        }
+
+        .genres td:nth-child(3), td:nth-child(4){
+            width: 70px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<a href="booklist.html" th:href="@{/books}">Books</a>
+<a href="authorlist.html" th:href="@{/authors}">Authors</a>
+
+<h3>Genres:</h3>
+
+<table class="genres">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.id}">1</td>
+        <td th:text="${genre.name}">John Doe</td>
+        <td>
+            <a th:href="@{/genres/edit/__${genre.id}__}" href="genre-edit.html">View</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

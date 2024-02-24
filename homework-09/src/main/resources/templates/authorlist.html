@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all authors</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors {
+            border: 1px solid steelblue;
+            width: 700px;
+            border-collapse: collapse;
+        }
+
+        .authors tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .authors td:first-child {
+            width: 10px;
+        }
+
+        .authors td:nth-child(3), td:nth-child(4){
+            width: 70px;
+        }
+
+        .errors {
+            color: red;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<a href="booklist.html" th:href="@{/books}">Books</a>
+<a href="genrelist.html" th:href="@{/genres}">Genres</a>
+
+    <h3>Authors:</h3>
+
+    <button type="button" style="margin-bottom: 20px; width: 100px; height:30px;">
+        <a href="author-edit.html" th:href="@{/authors/edit}">
+            Add author
+        </a>
+    </button>
+
+    <table class="authors">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Action</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="author : ${authors}">
+                <td th:text="${author.id}">1</td>
+                <td th:text="${author.fullName}">John Doe</td>
+                <td>
+                    <a th:href="@{/authors/edit/__${author.id}__}" href="author-edit.html">Edit</a>
+                </td>
+                <td>
+                    <form th:action="@{/authors/delete/__${author.id}__}" method="post">
+                        <button class="btn btn-link">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="errors" th:if="${exception}" th:text="${exception}">Exception</div>
+</body>
+</html>
