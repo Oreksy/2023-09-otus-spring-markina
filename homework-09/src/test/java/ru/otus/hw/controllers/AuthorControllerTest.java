@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.services.AuthorService;
 
@@ -40,6 +41,8 @@ public class AuthorControllerTest {
 
         this.mvc.perform(get("/authors"))
                 .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("authorlist"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("authors"))
                 .andExpect(content().string(containsString("Author_1")))
                 .andExpect(content().string(containsString("Author_2")))
                 .andExpect(content().string(containsString("Author_3")));
@@ -56,6 +59,8 @@ public class AuthorControllerTest {
 
         this.mvc.perform(get("/authors/edit/1"))
                 .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("author-edit"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("author"))
                 .andExpect(content().string(containsString("Author_1")));
     }
 
@@ -68,7 +73,7 @@ public class AuthorControllerTest {
         this.mvc.perform(post("/authors/edit")
                         .flashAttr("author", newAuthor))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/authors"));
+                 .andExpect(redirectedUrl("/authors"));
 
         verify(authorService, times(1)).update(newAuthor.getId(), newAuthor.getFullName());
     }
@@ -91,7 +96,8 @@ public class AuthorControllerTest {
     @Test
     void shouldDeleteAuthor() throws Exception {
         this.mvc.perform(post("/authors/delete/1"))
-                .andExpect(status().is(302));
+                .andExpect(status().is(302))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/authors"));
 
         verify(authorService).deleteById(1L);
     }

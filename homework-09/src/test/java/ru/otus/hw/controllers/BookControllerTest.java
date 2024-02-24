@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
@@ -50,6 +51,8 @@ public class BookControllerTest {
 
         this.mvc.perform(get("/books"))
                 .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("booklist"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("books"))
                 .andExpect(content().string(containsString("BookTitle_1")))
                 .andExpect(content().string(containsString("BookTitle_2")))
                 .andExpect(content().string(containsString("BookTitle_3")));
@@ -77,6 +80,8 @@ public class BookControllerTest {
 
         this.mvc.perform(get("/books/edit/1"))
                 .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("book-edit"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("book"))
                 .andExpect(content().string(containsString("BookTitle_1")))
                 .andExpect(content().string(containsString("<option value=\"1\" selected=\"selected\">Author_1</option>")))
                 .andExpect(content().string(containsString("<option value=\"1\" selected=\"selected\">Genre_1</option>")));
