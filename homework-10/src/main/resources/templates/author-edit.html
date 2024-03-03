@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit author</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+        input:id {
+        width: 500px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+</head>
+<body onload="getAuthor()">
+
+    <form id="author-edit">
+        <h3>Author Info:</h3>
+
+        <div class="row">
+            <label for="id-author">ID:</label>
+            <input id="id-author" style="width: 30px" type="text" readonly="readonly" name="id"/>
+        </div>
+
+        <div class="row">
+            <label for="author-name-input">Full Name:</label>
+            <input id="author-name-input" style="width: 300px" name="fullName" type="text"/>
+        </div>
+
+        <div class="row">
+            <button type="button" onclick="updateAuthor()" class="btn btn-success btn-lg">Save</button>
+            <a href="authorlist.html" th:href="@{/authors}">
+                <button type="button">Go back</button>
+            </a>
+        </div>
+    </form>
+
+    <h5>Updated author:</h5>
+    <pre id = "update-author"></pre>
+
+
+    <script>
+        function getAuthor(){
+          var authorId = [[${id}]];
+             fetch('/api/v1/authors/' + authorId)
+                 .then(response => response.json())
+                 .then(author => {
+                     document.getElementById('id-author').value = author.id;
+                     document.getElementById('author-name-input').value = author.fullName;
+             });
+         }
+
+        function updateAuthor(){
+        const updateAuthorContainer = document.getElementById("update-author")
+        const id = document.getElementById("id-author").value;
+        const fullName = document.getElementById("author-name-input").value;
+        const authorDto = {id: id, fullName: fullName}
+
+        fetch('/api/v1/authors/' + id, {
+                                method: 'PUT',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(authorDto)
+            }).then(response => response.json())
+            .then(author => updateAuthorContainer.innerHTML = JSON.stringify(author, null, 4))
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+        input:id {
+        width: 500px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+</head>
+<body onload="getBook()">
+
+<!--Book edition -->
+<form id="book-edit">
+    <h3>Book Info:</h3>
+
+    <div class="row">
+        <label for="id-book">ID:</label>
+        <input id="id-book" style="width: 30px" type="text" readonly="readonly"/>
+    </div>
+
+    <div class="row">
+        <label for="book-name-input">Title:</label>
+        <input id="book-name-input" style="width: 300px" name="title" type="text"/>
+    </div>
+
+
+    <div class="row">
+        <label for="book-author-input" >Author:</label>
+        <select id="book-author-input" style="width: 300px" name="authorDto">
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="book-genre-input" >Genre:</label>
+        <select id="book-genre-input" style="width: 300px" name="genreDto">
+        </select>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="updateBook()" class="btn btn-success btn-lg">Save</button>
+        <a href="booklist.html" th:href="@{/books}"><button type="button">Go back</button></a>
+    </div>
+</form>
+
+<h5>Updated book:</h5>
+<pre id = "update-book"></pre>
+
+<script>
+
+    function getBook() {
+        var id = [[${ id }]]
+        if (id != 0) {
+            fetch(`/api/v1/books/${id}`)
+            .then(response => response.json())
+            .then(book => toFormBook(book));
+        } else {
+            toFormBook(null)
+        }
+    }
+
+        function toFormBook(book) {
+           var authorId;
+           var genreId;
+           if (book != null) {
+               document.getElementById("id-book").value = book.id;
+               document.getElementById("book-name-input").value = book.title;
+               authorId = book.author.id;
+               genreId = book.genre.id;
+           } else {
+               document.getElementById("id-book").value = 0;
+                authorId = 0;
+                genreId = 0;
+           }
+            fetch("/api/v1/authors")
+                .then(response => response.json())
+                .then(authors => toFormAuthors(authors, authorId));
+
+            fetch("/api/v1/genres")
+                .then(response => response.json())
+                .then(genres => toFormGenres(genres, genreId));
+        }
+
+
+    function toFormAuthors(authors, authorId) {
+        authors.forEach(author => {
+            const list = document.getElementById("book-author-input");
+            if (author.id === authorId) {
+                list.add(new Option(author.fullName, author.id, false, true));
+            } else {
+                 list.add(new Option(author.fullName, author.id));
+            }
+        });
+    }
+
+    function toFormGenres(genres, genreId) {
+        genres.forEach(genre => {
+            const list = document.getElementById("book-genre-input")
+            if (genre.id === genreId) {
+                list.add(new Option(genre.name, genre.id, false, true));
+            } else {
+                list.add(new Option(genre.name, genre.id));
+            }
+        });
+    }
+
+    function updateBook() {
+        const updateAuthorContainer = document.getElementById("update-book")
+        const id = document.getElementById("id-book").value;
+        const title = document.getElementById("book-name-input").value;
+        const authorId = document.getElementById("book-author-input").value;
+        const author = {id: authorId};
+        const genreId = document.getElementById("book-genre-input").value;
+        const genre = {id: genreId};
+        const bookDto = { id: id, title: title, author: author, genre: genre };
+
+        if (id === 0) {
+            var met = 'POST'
+        } else {
+            var met = 'PUT'
+        }
+
+        fetch('/api/v1/books/' + id, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                body: JSON.stringify(bookDto)
+            }).then(response => response.json())
+              .then(book => updateAuthorContainer.innerHTML = JSON.stringify(book, null, 4));
+    }
+
+
+</script>
+</body>
+</html>
