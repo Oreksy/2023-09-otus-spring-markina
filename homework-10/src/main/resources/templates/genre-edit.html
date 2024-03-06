@@ -52,12 +52,11 @@
     </div>
 </form>
 
-<h5>Updated genre:</h5>
 <pre id = "update-genre"></pre>
 
 <script>
     function getGenre(){
-      var genreId = [[${id}]];
+      let genreId = [[${id}]];
       if (genreId != 0) {
          fetch('/api/v1/genres/' + genreId)
              .then(response => response.json())
@@ -86,7 +85,7 @@
                                 },
                                 body: JSON.stringify(genreDto)
             }).then(response => response.json())
-            .then(genre => updateGenreContainer.innerHTML = JSON.stringify(genre, null, 4))
+            .then(genre => updateGenreContainer.innerHTML = "genre saved")
     } else {
          fetch('/api/v1/genres', {
                                 method: 'POST',
@@ -96,7 +95,7 @@
                                 },
                                 body: JSON.stringify(genreDto)
             }).then(response => response.json())
-            .then(genre => updateGenreContainer.innerHTML = JSON.stringify(genre, null, 4))
+            .then(genre => updateGenreContainer.innerHTML = "genre added")
     }
 }
 </script>

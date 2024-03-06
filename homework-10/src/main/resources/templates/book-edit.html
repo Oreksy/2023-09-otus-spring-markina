@@ -64,13 +64,12 @@
     </div>
 </form>
 
-<h5>Updated book:</h5>
 <pre id = "update-book"></pre>
 
 <script>
 
     function getBook() {
-        var id = [[${ id }]]
+        let id = [[${ id }]]
         if (id != 0) {
             fetch(`/api/v1/books/${id}`)
             .then(response => response.json())
@@ -81,8 +80,8 @@
     }
 
         function toFormBook(book) {
-           var authorId;
-           var genreId;
+           let authorId;
+           let genreId;
            if (book != null) {
                document.getElementById("id-book").value = book.id;
                document.getElementById("book-name-input").value = book.title;
@@ -136,9 +135,9 @@
         const bookDto = { id: id, title: title, author: author, genre: genre };
 
         if (id === 0) {
-            var met = 'POST'
+            let met = 'POST'
         } else {
-            var met = 'PUT'
+            let met = 'PUT'
         }
 
         fetch('/api/v1/books/' + id, {
@@ -149,7 +148,7 @@
                     },
                 body: JSON.stringify(bookDto)
             }).then(response => response.json())
-              .then(book => updateAuthorContainer.innerHTML = JSON.stringify(book, null, 4));
+              .then(book => updateAuthorContainer.innerHTML = "Book saved");
     }
 
 

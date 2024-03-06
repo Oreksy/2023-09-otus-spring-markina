@@ -35,29 +35,31 @@
     <script>
 
         function getAllAuthors() {
-        fetch("/api/v1/authors")
-          .then(response => response.json())
-          .then(authors => {
+            fetch("/api/v1/authors")
+                .then(response => response.json())
+                .then(authors => fillAuthors(authors))
+                .catch(error => console.log('Произошла ошибка:', error));
+        }
+
+        function fillAuthors(authors) {
             const author_list = document.getElementById("author_list");
             if (author_list != null) {
                 author_list.innerHTML = "";
                 authors.forEach(function (author) {
                     author_list.innerHTML += `
-                            <tr id="row_author_${author.id}">
-                                <td>${author.id}</td>
-                                <td>${author.fullName}</td>
-                                <td class="action">
-                                    <a href="/authors/edit/${author.id}">Edit</a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn-link" onclick="authorDelete(${author.id})">Delete</button>
-                                </td>
-                            </tr>
-                        `;
+                          <tr id="row_author_${author.id}">
+                              <td>${author.id}</td>
+                              <td>${author.fullName}</td>
+                              <td class="action">
+                                  <a href="/authors/edit/${author.id}">Edit</a>
+                              </td>
+                              <td>
+                                  <button type="button" class="btn-link" onclick="authorDelete(${author.id})">Delete
+                              </td>
+                          </tr>
+                      `;
                 });
             }
-        })
-          .catch(error => console.log('Произошла ошибка:', error));
         }
 
          document.addEventListener('DOMContentLoaded', getAllAuthors(), false);

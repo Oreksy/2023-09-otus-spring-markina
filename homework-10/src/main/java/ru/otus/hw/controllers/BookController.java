@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
-import ru.otus.hw.services.GenreService;
 
 import java.util.List;
 
@@ -21,10 +19,6 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
-
-    private final AuthorService authorService;
-
-    private final GenreService genreService;
 
     @GetMapping({"/api/v1/books"})
     public List<BookDto> getAllBooks() {

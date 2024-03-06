@@ -52,13 +52,12 @@
         </div>
     </form>
 
-    <h5>Updated author:</h5>
     <pre id = "update-author"></pre>
 
 
     <script>
         function getAuthor(){
-          var authorId = [[${id}]];
+          let authorId = [[${id}]];
              fetch('/api/v1/authors/' + authorId)
                  .then(response => response.json())
                  .then(author => {
@@ -81,7 +80,7 @@
                                 },
                                 body: JSON.stringify(authorDto)
             }).then(response => response.json())
-            .then(author => updateAuthorContainer.innerHTML = JSON.stringify(author, null, 4))
+            .then(author => updateAuthorContainer.innerHTML = "Author saved")
     }
     </script>
 </body>
