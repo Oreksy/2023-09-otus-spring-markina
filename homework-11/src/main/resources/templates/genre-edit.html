@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit genre</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+        input:id {
+        width: 500px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+</head>
+<body onload="getGenre()">
+
+<form id="genre-edit">
+    <h3>Genre Info:</h3>
+
+    <div class="row">
+        <label for="id-genre">ID:</label>
+        <input id="id-genre" style="width: 170px" type="text" readonly="readonly" name="id"/>
+    </div>
+
+    <div class="row">
+        <label for="genre-name-input">Name:</label>
+        <input id="genre-name-input" style="width: 350px" name="Name" type="text"/>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="updateGenre()" class="btn btn-success btn-lg">Save</button>
+        <a href="genrelist.html" th:href="@{/genres}">
+            <button type="button">Go back</button>
+        </a>
+    </div>
+</form>
+
+<pre id = "update-genre"></pre>
+
+<script>
+    function getGenre(){
+      let genreId = '[[${id}]]';
+      if (genreId != '0') {
+         fetch('/api/v1/genres/' + genreId)
+             .then(response => response.json())
+             .then(genre => {
+                 document.getElementById('id-genre').value = genre.id;
+                 document.getElementById('genre-name-input').value = genre.name;
+         });
+      }
+     }
+
+    function updateGenre(){
+    const updateGenreContainer = document.getElementById("update-genre")
+    const id = document.getElementById("id-genre").value;
+    const name = document.getElementById("genre-name-input").value;
+    const genreDtoPut = {id: id, name: name}
+    const genreDtoPost = {name: name}
+
+    if (id != '') {
+        fetch('/api/v1/genres/' + id, {
+                                method: 'PUT',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(genreDtoPut)
+            }).then(response => response.json())
+            .then(genre => updateGenreContainer.innerHTML = "genre saved")
+    } else {
+         fetch('/api/v1/genres', {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(genreDtoPost)
+            }).then(response => response.json())
+            .then(genre => updateGenreContainer.innerHTML = "genre added")
+    }
+}
+</script>
+</body>
+</html>
