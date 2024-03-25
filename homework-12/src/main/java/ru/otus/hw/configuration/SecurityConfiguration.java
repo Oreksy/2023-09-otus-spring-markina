@@ -1,5 +1,6 @@
 package ru.otus.hw.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -12,19 +13,16 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                // разрешить доступ только для аутентифицированных пользователей
                 .authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
-                // включить поддержку формы входа
                 .formLogin(Customizer.withDefaults())
-                // включить поддержку Basic-аутентификации
-                //.httpBasic(Customizer.withDefaults())
-                // собрать цепочку фильтров
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
