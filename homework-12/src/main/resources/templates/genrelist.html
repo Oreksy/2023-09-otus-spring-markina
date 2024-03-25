@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all genres</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genres {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+        }
+
+        .genres tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .genres td:first-child {
+            width: 10px;
+        }
+
+        .genres td:nth-child(3), td:nth-child(4){
+            width: 70px;
+        }
+
+    </style>
+
+    <script>
+
+        function getAllGenres() {
+            fetch("/api/v1/genres")
+                .then(response => response.json())
+                .then(genres => {
+                    const genre_list = document.getElementById("genre_list");
+                    if (genre_list != null) {
+                        genre_list.innerHTML = "";
+                        genres.forEach(function (genre) {
+                            genre_list.innerHTML += `
+                                <tr id="row_genre_${genre.id}">
+                                    <td>${genre.id}</td>
+                                    <td>${genre.name}</td>
+                                    <td class="action">
+                                        <a href="/genres/edit/${genre.id}">Edit</a>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => console.log('Произошла ошибка:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', getAllGenres(), false);
+
+    </script>
+
+</head>
+<body>
+
+<a href="booklist.html" th:href="@{/books}">Books</a>
+<a href="authorlist.html" th:href="@{/authors}">Authors</a>
+
+<h3>Genres:</h3>
+<button type="button" style="margin-bottom: 20px; width: 100px; height:30px;">
+    <a href="genre-edit.html" th:href="@{/genres/edit/0}">
+        Add genre
+    </a>
+</button>
+
+<table class="genres">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody  id="genre_list">
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit author</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+        input:id {
+        width: 500px;
+        }
+
+        .errors {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <form id="author-add">
+        <h3>Create new author:</h3>
+
+        <div class="row">
+            <label for="author-name-input">Full Name:</label>
+            <input id="author-name-input" style="width: 300px" name="fullName" type="text"/>
+        </div>
+
+        <div class="row">
+            <button type="button" onclick="saveAuthor()" class="btn btn-success btn-lg">Save</button>
+            <a href="authorlist.html" th:href="@{/authors}">
+                <button type="button">Cancel</button>
+            </a>
+        </div>
+    </form>
+
+<script>
+    function saveAuthor(){
+        const fullName = document.getElementById("author-name-input").value;
+        const authorInsertDto = {fullName: fullName}
+
+        fetch('/api/v1/authors', {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(authorInsertDto)
+            }).then(response => window.location.replace('/authors'))
+
+    }
+</script>
+</body>
+</html>
+
