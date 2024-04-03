@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all authors</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors {
+            border: 1px solid steelblue;
+            width: 700px;
+            border-collapse: collapse;
+        }
+
+        .authors tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .authors td:first-child {
+            width: 10px;
+        }
+
+        .authors td:nth-child(3), td:nth-child(4){
+            width: 70px;
+        }
+
+        .errors {
+            color: red;
+        }
+
+    </style>
+    <script>
+
+        function getAllAuthors() {
+            fetch("/api/v1/authors")
+                .then(response => response.json())
+                .then(authors => fillAuthors(authors))
+                .catch(error => console.log('Произошла ошибка:', error));
+        }
+
+        function fillAuthors(authors) {
+            const author_list = document.getElementById("author_list");
+            if (author_list != null) {
+                author_list.innerHTML = "";
+                authors.forEach(function (author) {
+                    author_list.innerHTML += `
+                          <tr id="row_author_${author.id}">
+                              <td>${author.id}</td>
+                              <td>${author.fullName}</td>
+                              <td class="action">
+                                  <a href="/authors/edit/${author.id}">Edit</a>
+                              </td>
+                              <td>
+                                  <button type="button" class="btn-link" onclick="authorDelete(${author.id})">Delete
+                              </td>
+                          </tr>
+                      `;
+                });
+            }
+        }
+
+         document.addEventListener('DOMContentLoaded', getAllAuthors(), false);
+
+         function authorDelete(id) {
+            if (id != null) {
+                fetch('/api/v1/authors/' + id, {method: 'DELETE'})
+                    .then((response) => response.text())
+                    .then((response) => {
+                        window.location.replace("/authors");
+                    })
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<a href="booklist.html" th:href="@{/books}">Books</a>
+<a href="genrelist.html" th:href="@{/genres}">Genres</a>
+
+    <h3>Authors:</h3>
+
+    <button type="button" style="margin-bottom: 20px; width: 100px; height:30px;">
+        <a href="author-add.html" th:href="@{/authors/add}">
+            Add author
+        </a>
+    </button>
+
+    <table class="authors">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Action</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody  id="author_list">
+        </tbody>
+    </table>
+    <div class="errors" th:if="${exception}" th:text="${exception}">Exception</div>
+</body>
+</html>
