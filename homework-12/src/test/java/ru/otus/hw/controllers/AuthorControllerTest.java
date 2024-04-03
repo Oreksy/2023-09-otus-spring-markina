@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.configuration.SecurityConfiguration;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.AuthorInsertDto;
 import ru.otus.hw.services.AuthorService;
@@ -18,12 +17,13 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("Author контроллер")
 @WithMockUser(username = "test_user")
-@WebMvcTest({AuthorController.class, SecurityConfiguration.class})
+@WebMvcTest({AuthorController.class})
 public class AuthorControllerTest {
 
     @Autowired
@@ -86,7 +86,7 @@ public class AuthorControllerTest {
 
         this.mvc.perform(put("/api/v1/authors/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newAuthor)))
+                        .content(objectMapper.writeValueAsString(newAuthor)).with(csrf().asHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedAuthor)));
 
@@ -105,7 +105,7 @@ public class AuthorControllerTest {
 
         this.mvc.perform(post("/api/v1/authors")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authorInsertDto)))
+                        .content(objectMapper.writeValueAsString(authorInsertDto)).with(csrf().asHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedAuthor)));
 
@@ -116,7 +116,7 @@ public class AuthorControllerTest {
     @DisplayName("должен удалять автора по id")
     @Test
     void shouldDeleteAuthor() throws Exception {
-        this.mvc.perform(delete("/api/v1/authors/1"))
+        this.mvc.perform(delete("/api/v1/authors/1").with(csrf().asHeader()))
                 .andExpect(status().isOk());
 
         verify(authorService,times(1) ).deleteById(1L);

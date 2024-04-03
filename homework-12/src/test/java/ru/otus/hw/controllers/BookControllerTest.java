@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.hw.configuration.SecurityConfiguration;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
@@ -21,12 +20,13 @@ import ru.otus.hw.services.GenreService;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("Book контроллер")
 @WithMockUser(username = "test_user")
-@WebMvcTest({BookController.class, SecurityConfiguration.class})
+@WebMvcTest({BookController.class})
 public class BookControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -98,7 +98,7 @@ public class BookControllerTest {
 
         this.mvc.perform(put("/api/v1/books/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateBook)))
+                .content(objectMapper.writeValueAsString(updateBook)).with(csrf().asHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedBook)));
 
@@ -120,7 +120,7 @@ public class BookControllerTest {
 
         this.mvc.perform(post("/api/v1/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newBook)))
+                        .content(objectMapper.writeValueAsString(newBook)).with(csrf().asHeader()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedBook)));
 
@@ -132,7 +132,7 @@ public class BookControllerTest {
     @DisplayName("должен удалять книгу по id")
     @Test
     void shouldDeleteBook() throws Exception {
-        this.mvc.perform(delete("/api/v1/books/1"))
+        this.mvc.perform(delete("/api/v1/books/1").with(csrf().asHeader()))
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(1L);
